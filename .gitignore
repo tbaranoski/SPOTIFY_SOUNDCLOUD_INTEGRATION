@@ -1,0 +1,3 @@
+
+#Ignore the following files when pushing to github
+.Spotify_Config.py
