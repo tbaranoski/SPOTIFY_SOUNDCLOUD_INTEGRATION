@@ -1,4 +1,0 @@
-SPOTIFY_ID = "0b02fa719ea0405cbebcc780cf5f39a7"
-SPOTIFY_SECRET = "3d179b4cce4f40abb1e576e157db678e"
-
-#comment
