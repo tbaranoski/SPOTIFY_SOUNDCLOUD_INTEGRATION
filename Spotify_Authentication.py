@@ -8,6 +8,6 @@ import Spotify_Config
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=Spotify_Config.SPOTIFY_ID,
                                                            client_secret=Spotify_Config.SPOTIFY_SECRET))
 
-results = sp.search(q='weezer', limit=20)
+results = sp.search(q='lil uzi', limit=20)
 for idx, track in enumerate(results['tracks']['items']):
     print(idx, track['name'])

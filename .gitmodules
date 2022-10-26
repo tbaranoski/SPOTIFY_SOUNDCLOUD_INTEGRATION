@@ -1,0 +1,3 @@
+[submodule "Spotify-Remote"]
+	path = Spotify-Remote
+	url = https://github.com/ruckshan-ratnam/Spotify-Remote.git
