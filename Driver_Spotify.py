@@ -22,9 +22,12 @@ def main():
     if(remote_object != None):
 
         #Test Pause
-        Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "pause")
-        time.sleep(1)
-        Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "play")
+        #Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "pause")
+        #time.sleep(1)
+        #Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "play")
+        #Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "next")
+        #Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "last")
+        Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "loop")
 
     else:
         logging.error("Can Not Control Spotify Playback in Driver.py")

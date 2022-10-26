@@ -60,16 +60,28 @@ def Control_Spotify_Playback(remote = None, command = None):
     if((command == None) or (remote == None)):
         logging.error("No command for playback was given in Control_Playback_Spotify.py")
 
+    #pause the current song
     elif(command == "pause"):
         remote.pause(device=None)
 
-    #should start at 60 seconds in
+    #resume where song left off
     elif(command == "play"):
 
-        #Get Current song offset
-
+        #Get Current song offset and play from there. Logic in remote.py
         remote.play(key=None,location=None)
 
+    #Skip to next song
+    elif((command == "skip") or (command =="next")):
+        remote.next(device=None)
+
+    #Go to last Song
+    elif((command == "last") or (command == "previous")):
+        remote.last(device=None)
+
+    #Repeat Song
+    elif((command == "repeat") or (command == "loop")):
+        remote.rep(off = False, device = None)
+    
 ########################################################################
 ########################################################################
 
