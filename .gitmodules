@@ -1,6 +1,4 @@
 [submodule "Spotify-Remote"]
 	path = Spotify-Remote
 	url = https://github.com/ruckshan-ratnam/Spotify-Remote.git
-[submodule "spotipy"]
-	path = spotipy
-	url = https://github.com/plamere/spotipy.git
+
