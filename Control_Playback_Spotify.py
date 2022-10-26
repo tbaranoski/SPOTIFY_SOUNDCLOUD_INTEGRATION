@@ -63,7 +63,11 @@ def Control_Spotify_Playback(remote = None, command = None):
     elif(command == "pause"):
         remote.pause(device=None)
 
+    #should start at 60 seconds in
     elif(command == "play"):
+
+        #Get Current song offset
+
         remote.play(key=None,location=None)
 
 ########################################################################

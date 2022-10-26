@@ -124,7 +124,8 @@ class remote:
     #
     # Given track and location
     # Play track at location
-    def play(self,key=None,location=None, offset_ms=0):
+    def play(self,key=None,location=None):
+
         # Check some states
         # See if user can even use play method
         if self.user == 'open' or self.user == 'free':
@@ -133,19 +134,25 @@ class remote:
         # Added support for multiple songs
 
         #Added Statement for playing with a specific offset_ms (where song left off)
-        elif((offset_ms != 0) and (key==None) and (location==None)):
+        elif((key==None) and (location==None)):
             logging.info("Custom play with offset_ms ran")
-            self.spotify_object.start_playback(uris = [((self.spotify_object.currently_playing())['item']['uri']),((self.spotify_object.currently_playing())['item']['uri'])], position_ms=offset_ms)
-            self.next()
-            print("Playing " + ((self.spotify_object.currently_playing())['item']['name']) + " at current device")
+
+            #Current Song info
+            current_song_dictionary = self.spotify_object.current_user_playing_track()
+            time_stamp_ms = current_song_dictionary['progress_ms']
+
+            self.spotify_object.start_playback(uris = [((self.spotify_object.currently_playing())['item']['uri']),((self.spotify_object.currently_playing())['item']['uri'])], position_ms=time_stamp_ms)
+            print("Playing " + ((self.spotify_object.currently_playing())['item']['name']) + " at current device at time(ms):", time_stamp_ms)
 
 
         elif isinstance(key,list) and location is not None:
+            logging.info("Remote-Play Option1")
             uris = []
             for x in key:
                 uris.append((self.search(x,multiple=True))[1])
             self.spotify_object.start_playback(uris=uris,device_id=self.findDevice(location))
         elif isinstance(key,list) and location is None:
+            logging.info("Remote-Play Option2")
             uris = []
             for x in key:
                 uris.append((self.search(x,multiple=True))[1])
@@ -153,11 +160,13 @@ class remote:
             self.spotify_object.start_playback(uris = uris)
         # If user gives no key and no location then resume playback on current location
         elif key is None and location is None:
+            logging.info("Remote-Play Option3")
             self.spotify_object.start_playback(uris = [((self.spotify_object.currently_playing())['item']['uri']),((self.spotify_object.currently_playing())['item']['uri'])])
             self.next()
             print("Playing " + ((self.spotify_object.currently_playing())['item']['name']) + " at current device")
         # If user gives no location but gives us a key then play given key at current device playback
         elif location is None and key is not None:
+            logging.info("Remote-Play Option4")
             album_location = self.search(str(key))
             track_id = str(self.user_albums[album_location[0]][1][album_location[1]][1])
             self.spotify_object.start_playback(uris = [track_id,track_id])
@@ -165,6 +174,7 @@ class remote:
             print("Playing " + (track_id) + " at current device")
         # If user gives key and location then play key at device
         elif key is not None and location is not None:
+            logging.info("Remote-Play Option5")
             album_location = self.search(str(key))
             track_id = self.user_albums[album_location[0]][1][album_location[1]][1]
             location = self.findDevice(location)
@@ -173,6 +183,7 @@ class remote:
             print("Playing " + (self.user_albums[album_location[0]][1][album_location[1]][0]) + " at " + location)
         # If user gives only location then start to play at location
         elif key is None and location is not None:
+            logging.info("Remote-Play Option6")
             self.spotify_object.start_playback(device_id = self.findDevice(location),uris = [((self.spotify_object.currently_playing())['item']['uri']),((self.spotify_object.currently_playing())['item']['uri'])])
             self.next()
             print("Playing " + ((self.spotify_object.currently_playing())['item']['name']) + " at " + location)

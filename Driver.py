@@ -6,7 +6,7 @@ import time #for testing and pausing
 import logging
 
 #Set log level to INFO to debug (WARNING is default)
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.INFO)
 
 
 ######     MAIN TEST DRIVER      ###########################################
@@ -23,11 +23,11 @@ def main():
 
         #Test Pause
         Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "pause")
-        #time.sleep(1)
-        #Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "play")
+        time.sleep(1)
+        Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "play")
 
     else:
-        logging.error("Can Not Control SPotify Playback in Driver.py")
+        logging.error("Can Not Control Spotify Playback in Driver.py")
 
     #finish Statement
     print("Finished Spotify Authentication")
