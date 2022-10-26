@@ -1,5 +1,6 @@
 import Spotify_Authentication
-import 
+import Control_Playback_Spotify
+import time #for testing and pausing
 
 
 import logging
@@ -13,10 +14,22 @@ logging.basicConfig(level=logging.WARNING)
 def main():
     
     #Authenticate Spotify Login
-    Spotify_Authentication.Authenticate_Spotify_Login()
-    
+    #Spotify_Authentication.Authenticate_Spotify_Login()
+    print("Start Test")
+    remote_object = Control_Playback_Spotify.Setup_Spotify_Remote()
 
+    #See if Spotify and Remote have been Authenticated Succesfully...If so control playback
+    if(remote_object != None):
 
+        #Test Pause
+        Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "pause")
+        #time.sleep(1)
+        #Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "play")
+
+    else:
+        logging.error("Can Not Control SPotify Playback in Driver.py")
+
+    #finish Statement
     print("Finished Spotify Authentication")
 
 

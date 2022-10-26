@@ -1,3 +1,4 @@
+import logging
 import spotipy
 from fuzzywuzzy import fuzz
 
@@ -123,13 +124,22 @@ class remote:
     #
     # Given track and location
     # Play track at location
-    def play(self,key=None,location=None):
+    def play(self,key=None,location=None, offset_ms=0):
         # Check some states
         # See if user can even use play method
         if self.user == 'open' or self.user == 'free':
             return 'must have premium'
         # @TODO Add support for playlist and mutliple songs
         # Added support for multiple songs
+
+        #Added Statement for playing with a specific offset_ms (where song left off)
+        elif((offset_ms != 0) and (key==None) and (location==None)):
+            logging.info("Custom play with offset_ms ran")
+            self.spotify_object.start_playback(uris = [((self.spotify_object.currently_playing())['item']['uri']),((self.spotify_object.currently_playing())['item']['uri'])], position_ms=offset_ms)
+            self.next()
+            print("Playing " + ((self.spotify_object.currently_playing())['item']['name']) + " at current device")
+
+
         elif isinstance(key,list) and location is not None:
             uris = []
             for x in key:
