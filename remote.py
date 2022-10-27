@@ -193,15 +193,29 @@ class remote:
     # If given device in normal name like desktop, iphone...
     # Pause playback on current_playback or target device
     def pause(self,device=None):
-        # See if user has premium
-        if self.user == 'open' or self.user == 'free':
-            return 'must have premium'
-        # If user gives us no device then assume the current playing device
-        elif device is None:
-            self.spotify_object.pause_playback()
-        # If user gives us the device name then pause playback at that device
-        elif device is not None:
-            self.spotify_object.pause_playback(device_id = self.findDevice(device))
+
+        #Determine if music is currentlly playing first
+        current_song_dictionary = self.spotify_object.current_user_playing_track()
+        is_playing = current_song_dictionary['is_playing']
+
+        #If playing then can pause
+        if(is_playing == True):
+             # See if user has premium
+            if self.user == 'open' or self.user == 'free':
+                return 'must have premium'
+            # If user gives us no device then assume the current playing device
+            elif device is None:
+                self.spotify_object.pause_playback()
+            # If user gives us the device name then pause playback at that device
+            elif device is not None:
+                self.spotify_object.pause_playback(device_id = self.findDevice(device))
+
+        #If not currentlly playing, can not pause. Log it
+        elif(is_playing == False):
+            logging.info("Can not pause, music is already paused in remote()")
+        
+        else:
+            logging.error("current_user_playing_track not producing approprate dictionary of data")
 
     # Go to next track
     # If givin device
