@@ -8,3 +8,6 @@
 [submodule "PySoundCloud"]
 	path = PySoundCloud
 	url = https://github.com/AnthonyMakesStuff/PySoundCloud.git
+[submodule "soundcloud-py"]
+	path = soundcloud-py
+	url = https://github.com/naim-prog/soundcloud-py.git
