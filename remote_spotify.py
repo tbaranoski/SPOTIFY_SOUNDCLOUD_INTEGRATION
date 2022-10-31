@@ -243,6 +243,17 @@ class remote:
     # If givin device and/or repeat
     # Then repeat will be turned on/off on current_playback or other device
     def rep(self, off = False, device = None):
+
+
+        #Determine if repeat is already ON or OFF
+        #playback_state_dict = self.spotify_object.get_playback_state()
+        #repeat_string = playback_state_dict["repeat_state"]
+        #print("The repeat state is: ", repeat_string)
+        #print(playback_state_dict)
+        temp_dict = self.spotify_object.current_playback(self, market=None, additional_types=None)
+        print("the temp dictionary is: ", temp_dict)
+
+
         # If device is not given and off is False then repeat track
         if device is None and off is False:
             self.spotify_object.repeat('track')

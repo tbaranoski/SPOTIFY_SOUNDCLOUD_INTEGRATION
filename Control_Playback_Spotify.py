@@ -1,5 +1,5 @@
 import Spotify_Config
-from remote import remote
+from remote_spotify import remote
 import spotipy
 import Spotify_Config
 
@@ -62,9 +62,6 @@ def Control_Spotify_Playback(remote = None, command = None):
 
     #pause the current song
     elif(command == "pause"):
-        #Determine if music is currentlly playing
-            
-
         remote.pause(device=None)
 
     #resume where song left off

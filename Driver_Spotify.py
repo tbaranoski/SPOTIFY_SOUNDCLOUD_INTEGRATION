@@ -27,7 +27,7 @@ def main():
         Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "play")
         #Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "next")
         #Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "last")
-        #Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "loop")
+        #Control_Playback_Spotify.Control_Spotify_Playback(remote = remote_object, command = "repeat")
 
     else:
         logging.error("Can Not Control Spotify Playback in Driver.py")
