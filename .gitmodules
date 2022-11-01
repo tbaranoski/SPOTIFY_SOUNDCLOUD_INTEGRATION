@@ -1,13 +1,9 @@
 [submodule "Spotify-Remote"]
 	path = Spotify-Remote
 	url = https://github.com/ruckshan-ratnam/Spotify-Remote.git
-
 [submodule "spotipy"]
 	path = spotipy
 	url = https://github.com/plamere/spotipy.git
-[submodule "PySoundCloud"]
-	path = PySoundCloud
-	url = https://github.com/AnthonyMakesStuff/PySoundCloud.git
 [submodule "soundcloud-py"]
 	path = soundcloud-py
 	url = https://github.com/naim-prog/soundcloud-py.git
