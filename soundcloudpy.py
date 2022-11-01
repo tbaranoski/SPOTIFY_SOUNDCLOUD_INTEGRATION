@@ -150,7 +150,7 @@ class Soundcloud:
         """
 
         req = requests.get(f"{BASE_URL}/tracks?ids={track_id}&client_id={self.client_id}", headers=self.headers)
-        return req.json()
+        return json.loads(req.content)
 
     def get_tracks_liked(self, limit=50):
         """
@@ -299,7 +299,7 @@ class Soundcloud:
         """
 
         req = requests.get(f"{BASE_URL}/me/playlist_likes/ids?limit={limit}&linked_partitioning=1&client_id={self.client_id}&app_version={self.app_version}", headers=self.headers)
-        return req.json()t 
+        return req.json()
 
     def like_playlist(self, playlist_id):
         """
