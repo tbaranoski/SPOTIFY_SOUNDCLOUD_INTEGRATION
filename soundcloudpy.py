@@ -6,6 +6,7 @@
 import requests
 import json
 from bs4 import BeautifulSoup
+import logging
 
 BASE_URL = "https://api-v2.soundcloud.com"
 
@@ -149,8 +150,16 @@ class Soundcloud:
         :param track_id: track id 
         """
 
-        req = requests.get(f"{BASE_URL}/tracks?ids={track_id}&client_id={self.client_id}", headers=self.headers)
-        return json.loads(req.content)
+        req = requests.get(f"{BASE_URL}/tracks?ids={track_id}&client_id={self.client_id}", headers=self.headers)        
+        json_dictionary = req.json()
+
+        #Decide what to return based on if metadata is populated or if there is an error and not populated
+        if not json_dictionary:
+            logging.info("JSON Metadata for song ID is empty")
+            return None
+
+        else:
+            return json_dictionary[0]
 
     def get_tracks_liked(self, limit=50):
         """

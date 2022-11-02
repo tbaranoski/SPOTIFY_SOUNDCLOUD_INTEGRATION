@@ -1,3 +1,4 @@
+from ctypes import sizeof
 import logging
 import sys
 import SoundCloud_Config
@@ -9,12 +10,14 @@ def Control_Soundcloud_Playback(remote = None, command = None):
     soundcloud_account_dict = remote.get_account_details()
     USER_ID = soundcloud_account_dict['id']
   
+    #Get list Names: (Liked Songs, and ALL USER Playlists)
+
 
     #If a remote is given and command is given for playback
     if((remote != None) and (command != None)):
         
         #Get liked songs and select playlists
-        liked_songs = remote.get_tracks_liked(limit=50)
+        liked_songs = remote.get_tracks_liked(limit=100)
         print_song_names(remote, liked_songs)
 
 
@@ -47,14 +50,36 @@ def print_song_names(remote = None, liked_songs = None):
 
         #Print the liked song names:
         print("Liked Songs:")
+        i = 0
+
+       #Print the title for all liked songs with metadata
         for x in collection_array:
-            
+            i = i + 1 #itterate counter
+
             #Print song names
-            song_dictionary = (remote.get_track_details(track_id = x)).json()
-            print(type(song_dictionary))
-            song_title = song_dictionary['title']
-            print(x+1,". : ", song_title)
+            song_dictionary = remote.get_track_details(track_id = x)
+
+            #If dictionary returned is not empty then print
+            if(song_dictionary != None):
+
+                song_title = song_dictionary['title']
+                counter_string = str(i)
+                print(counter_string +".", song_title)
+
+            #If No song metadata is returned
+            else:
+                counter_string = str(i)
+                print(counter_string +".")
 
 
     else:
         logging.error("song IDs not given to print_song_names in Control_Playback_Soundcloud.py")
+
+#helper function for debugging and getting SONG IDS
+def print_song_ids(array):
+
+    counter = 0
+    for x in array:
+        counter = counter + 1
+        str_counter = str(counter)
+        print(str_counter + ". ", x)

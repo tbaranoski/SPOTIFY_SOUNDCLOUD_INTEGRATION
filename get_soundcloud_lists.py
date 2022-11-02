@@ -1,0 +1,125 @@
+import logging
+import sys
+from soundcloud_lists import List, Song
+
+#Gets the Lists of valid songs from the users SOundcloud
+#Current lists include:
+#1. Likes list
+#2. User Playlist(s)
+
+
+#Helper FUnction: Get Soundcloud USER ID
+def get_USER_ID(remote):
+    #Get Soundcloud USER ID
+    soundcloud_account_dict = remote.get_account_details()
+    USER_ID = soundcloud_account_dict['id']
+
+    if(USER_ID != None):
+        try:
+            return USER_ID
+        except:
+            logging.error("Could Not Extract valid USER_ID from GET_USER_ID in get_Soundcloud_lists.py")
+            return None
+
+    #No User ID returned 
+    else:
+        logging.error("No User ID returned in get_Soundcloud_lists.py")
+        return None
+
+#####################################################################################################################
+#####################################################################################################################
+#Returns an array of all songs in the list that have metadata
+def get_valid_songs(remote = None, ID_array = None, print_bool = False):
+    
+    valid_IDs = []
+    valid_dictionaries = []
+
+    if((remote != None) and (ID_array != None)):
+    #Print the liked song names:
+        print("Liked Songs:")
+        i = 0
+
+       #Print the title for all liked songs with metadata
+        for x in ID_array:
+            i = i + 1 #itterate counter
+
+            #Print song names
+            song_dictionary = remote.get_track_details(track_id = x)
+
+            #If dictionary returned is not empty then print
+            if(song_dictionary != None):
+
+                #Save song ID in valid_IDs list
+                valid_IDs.append(x)
+                valid_dictionaries.append(song_dictionary)
+
+                #Print the songs if print flag is True
+                if(print_bool == True):
+                    song_title = song_dictionary['title']
+                    counter_string = str(i)
+                    print(counter_string +".", song_title)
+
+            #If No song metadata is returned
+            else:
+                counter_string = str(i)
+                if(print_bool == True):
+                    print(counter_string +".")
+
+        return ([valid_IDs, valid_dictionaries])
+
+    #Not a valid object remote given
+    else:
+        logging.error("Not a valid remote or array in get_valid_songs() in get_soundcloud_lists.py")
+        return None
+
+#####################################################################################################################
+#####################################################################################################################
+def Get_Soundcloud_lists(remote = None):
+
+    #If soundcloud remote object is valid
+    if(remote != None):
+
+        #Get User ID
+        USER_ID = get_USER_ID(remote)
+        
+        #Get Lists of Song IDS
+        if(USER_ID != None):
+
+            #Get Valid Liked Songs list
+            ##################################################################################
+            #liked_songs = remote.get_tracks_liked(limit=100)
+            user_dictionary = remote.get_user_details(user_id = USER_ID)
+            num_liked_songs = user_dictionary['likes_count']
+            liked_songs = remote.get_tracks_liked(limit=20) #num_liked_songs)
+            
+            #Extract the Song IDS as an array
+            liked_song_IDS = liked_songs['collection']
+            double_array = get_valid_songs(remote = remote, ID_array = liked_song_IDS)
+
+            valid_IDs_array = double_array[0]
+            valid_dictionaries = double_array[1]
+            
+
+            #Create List object
+            liked_songs_object = List(description = "Liked Songs", name = 'Likes', total_num_songs = num_liked_songs, total_num_populated_songs = len(valid_IDs_array), song_ids = valid_IDs_array, array_dictionaries = valid_dictionaries)
+            
+            #Get all user playlists
+            ##################################################################################
+            num_playlists = user_dictionary['playlist_count']
+            playlist_array = remote.get_account_playlists()
+            
+            print(playlist_array)
+            playlist_array['collection']
+
+            ##################################################################################
+
+
+        #If no USER_ID is returned exit program
+        else:
+            sys.exit("Program exited. No valid USER_ID")
+    
+    #Non Valid Remote object
+    else:
+        logging.error("Soundcloud Remote object is not valid in Get_Soundcloud_lists() in get_Soundcloud_lists.py")
+
+
