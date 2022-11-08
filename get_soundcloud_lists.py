@@ -36,9 +36,11 @@ def get_valid_songs(remote = None, ID_array = None, print_bool = False):
 
     if((remote != None) and (ID_array != None)):
     #Print the liked song names:
-        print("Liked Songs:")
-        i = 0
 
+        if(print_bool == True):
+            print("Liked Songs:")
+        
+        i = 0
        #Print the title for all liked songs with metadata
         for x in ID_array:
             i = i + 1 #itterate counter
@@ -74,7 +76,7 @@ def get_valid_songs(remote = None, ID_array = None, print_bool = False):
 
 #####################################################################################################################
 #####################################################################################################################
-def Get_Soundcloud_lists(remote = None):
+def Get_Soundcloud_lists(remote = None,soundcloud_data_obj = None):
 
     #If soundcloud remote object is valid
     if(remote != None):
@@ -99,19 +101,74 @@ def Get_Soundcloud_lists(remote = None):
             valid_IDs_array = double_array[0]
             valid_dictionaries = double_array[1]
             
+            #Get the stream URLS and append to an array
+            array_urls = []
+            for song_ID in valid_IDs_array:
+                stream_url = remote.get_stream_url(song_ID)
+                array_urls.append(stream_url)
 
             #Create List object
-            liked_songs_object = List(description = "Liked Songs", name = 'Likes', total_num_songs = num_liked_songs, total_num_populated_songs = len(valid_IDs_array), song_ids = valid_IDs_array, array_dictionaries = valid_dictionaries)
+            liked_songs_object = List(description = "Liked Songs", name = 'Likes', total_num_songs = num_liked_songs, total_num_populated_songs = len(valid_IDs_array), song_ids = valid_IDs_array, array_dictionaries = valid_dictionaries, array_stream_urls = array_urls)
+            soundcloud_data_obj.add_playlist(temp_array = liked_songs_object) #added
             
             #Get all user playlists
             ##################################################################################
-            num_playlists = user_dictionary['playlist_count']
-            playlist_array = remote.get_account_playlists()
+            #playlist_array = remote.get_account_playlists()
+            user_playlists = (remote.get_playlists_from_user(user_id = USER_ID, limit = 15))['collection']
             
-            print(playlist_array)
-            playlist_array['collection']
+            #Itterate through Users playlists
+            counter = 0
+            for i in user_playlists:
+                #counter += 1
+                
+                playlist_details = remote.get_playlist_details(i['id'])
+
+                #Reset temp arrays
+                list_tracks = playlist_details['tracks']
+                song_IDs = []
+                valid_IDs_array = []
+                valid_dictionaries = []
+
+                #Get all song IDS and respective dictionary
+                for x in list_tracks:
+                    song_IDs.append(x['id']) #append song IDs to list
+
+                #Get valid IDS (only songs with metadata provided)                
+                double_array = get_valid_songs(remote = remote, ID_array = song_IDs)
+                valid_IDs_array = double_array[0]
+                valid_dictionaries = double_array[1]
+
+                 #Get the stream URLS and appned to an array
+                array_urls_temp = []
+                for song_ID in valid_IDs_array:
+                    stream_url = remote.get_stream_url(song_ID)
+                    array_urls_temp.append(stream_url)
+
+                #Create a List object
+                playlist_object_temp = List(description = i['title'], name = i['title'], total_num_songs = len(list_tracks), total_num_populated_songs = len(valid_IDs_array), song_ids = valid_IDs_array, array_dictionaries = valid_dictionaries, array_stream_urls = array_urls_temp)
+                soundcloud_data_obj.add_playlist(temp_array = playlist_object_temp) #added
 
             ##################################################################################
+
+
+
+            #Test Driver start
+            #################################################################
+            #print("The number of playlists in object is: ",soundcloud_data_obj.print_num_playlists())
+
+            soundcloud_data_obj.print_all_data()
+
+            #Try to get stream data for just one song. First get ID
+            #example_song_ID = soundcloud_data_obj.playlists_array[0].Song_objects_array[0].ID
+            #print(example_song_ID)
+
+            #stream_dict = remote.get_stream_url(example_song_ID)
+            #print("type: ", type(stream_dict))
+            #print("stream_dict: ", stream_dict)
+
+            #################################################################
+            #Test Driver End
+
 
 
         #If no USER_ID is returned exit program

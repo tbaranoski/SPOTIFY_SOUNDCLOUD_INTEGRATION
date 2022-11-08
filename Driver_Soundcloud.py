@@ -2,6 +2,7 @@ from soundcloudpy import Soundcloud
 import SoundCloud_Config
 import Control_Playback_Soundcloud
 import get_soundcloud_lists
+from soundcloud_lists import SoundCloud_Data
 
 
 import logging
@@ -19,8 +20,11 @@ def main():
 
     #If the soundcloud authentication is succesfull get control of API    
     if(soundcloud_account != None):
-        #Control_Playback_Soundcloud.Control_Soundcloud_Playback(remote = soundcloud_account, command = "play")        
-        get_soundcloud_lists.Get_Soundcloud_lists(remote = soundcloud_account)
+        #Control_Playback_Soundcloud.Control_Soundcloud_Playback(remote = soundcloud_account, command = "play")
+         
+        soundcloud_d = SoundCloud_Data()
+                
+        get_soundcloud_lists.Get_Soundcloud_lists(remote = soundcloud_account, soundcloud_data_obj = soundcloud_d)
 
 
 

@@ -382,11 +382,12 @@ class Soundcloud:
         """
         :param track_id: track id 
         """
-
-        full_json = list(json.loads(self.get_track_details(track_id)))
-        media_url = full_json[0]['media']['transcodings'][0]['url']
-        track_auth = full_json[0]['track_authorization']
-
+        
+        full_json = self.get_track_details(track_id)                
+        media_url1 = full_json['media']#['transcodings']['url']        
+        media_url2 = media_url1['transcodings']        
+        media_url = (media_url2[0])['url']        
+        track_auth = full_json['track_authorization']    
         stream_url = f"{media_url}?client_id={self.client_id}&track_authorization={track_auth}"
 
         req = requests.get(stream_url, headers=self.headers)
