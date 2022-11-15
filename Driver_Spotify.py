@@ -35,6 +35,7 @@ def main():
     
     
     spot_data_object = get_spotify_lists.add_spotify_playlists(temp_list = spotify_playlists, spot_obj= spotify_object)
+    spot_data_object.print_all_data()
 
     #See if Spotify and Remote have been Authenticated Succesfully...If so control playback
     if(remote_object != None):

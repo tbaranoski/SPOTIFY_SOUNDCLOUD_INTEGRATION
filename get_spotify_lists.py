@@ -95,7 +95,7 @@ def add_spotify_playlists(temp_list = None, spot_obj = None):
             playlist_temp = Spotify_List(description = playlist_description, name = playlist_name, total_num_songs = counter,total_num_populated_songs = counter,song_ids = song_ids_array, array_time_ids = song_duration_array, names_array = song_names_array, playlist_id = play_id)
             Spotify_Data_obj.add_playlist(playlist_temp)
     
-    print_spot_data_structure(spot_obj = Spotify_Data_obj)
+    #print_spot_data_structure(spot_obj = Spotify_Data_obj)
 
     #Return the data structure
     return Spotify_Data_obj
