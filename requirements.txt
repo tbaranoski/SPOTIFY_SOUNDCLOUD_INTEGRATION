@@ -1,1 +1,2 @@
 #Add Requirements needed as well as for submodules at a later date
+urllib3>=1.26

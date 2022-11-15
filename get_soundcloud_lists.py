@@ -1,6 +1,7 @@
 import logging
 import sys
 from soundcloud_lists import List, Song
+import Control_Playback_Soundcloud
 
 #Gets the Lists of valid songs from the users SOundcloud
 #Current lists include:
@@ -138,7 +139,7 @@ def Get_Soundcloud_lists(remote = None,soundcloud_data_obj = None):
                 valid_IDs_array = double_array[0]
                 valid_dictionaries = double_array[1]
 
-                 #Get the stream URLS and appned to an array
+                 #Get the stream URLS and append to an array
                 array_urls_temp = []
                 for song_ID in valid_IDs_array:
                     stream_url = remote.get_stream_url(song_ID)
@@ -159,12 +160,12 @@ def Get_Soundcloud_lists(remote = None,soundcloud_data_obj = None):
             soundcloud_data_obj.print_all_data()
 
             #Try to get stream data for just one song. First get ID
-            #example_song_ID = soundcloud_data_obj.playlists_array[0].Song_objects_array[0].ID
+            example_song_ID = soundcloud_data_obj.playlists_array[0].Song_objects_array[0].ID
             #print(example_song_ID)
 
-            #stream_dict = remote.get_stream_url(example_song_ID)
-            #print("type: ", type(stream_dict))
-            #print("stream_dict: ", stream_dict)
+            stream_dict = remote.get_stream_url(example_song_ID)
+            print("type: ", type(stream_dict))
+            print("stream_dict: ", stream_dict)
 
             #################################################################
             #Test Driver End

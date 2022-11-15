@@ -1,1 +1,1 @@
-get_account_details(
+spotify_obj = spotify_object

@@ -2,7 +2,7 @@ import Spotify_Config
 from remote_spotify import remote
 import spotipy
 import Spotify_Config
-
+import os
 
 #logging
 import logging
@@ -40,10 +40,12 @@ def Setup_Spotify_Remote():
         os.remove(f".cache-{Spotify_Config.USER_NAME}")
         token = spotipy.util.prompt_for_user_token(SpotifyId, scope, client_id=CLIENT_ID,client_secret=CLIENT_SECRET,redirect_uri=REDIRECT_URI)
 
-
+    
     #return the remote object if Authentication was succesfull
     if(Authenticated_bool == True):
-        spotify_object = spotipy.Spotify(auth=token)    
+        
+        spotify_object = spotipy.Spotify(auth=token)
+        
         remote_obj = remote(spotify_object)
         return remote_obj
 
