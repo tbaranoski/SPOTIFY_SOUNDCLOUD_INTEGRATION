@@ -42,7 +42,7 @@ def get_valid_songs(remote = None, ID_array = None, print_bool = False):
             print("Liked Songs:")
         
         i = 0
-       #Print the title for all liked songs with metadata
+        #Print the title for all liked songs with metadata
         for x in ID_array:
             i = i + 1 #itterate counter
 
@@ -139,7 +139,7 @@ def Get_Soundcloud_lists(remote = None,soundcloud_data_obj = None):
                 valid_IDs_array = double_array[0]
                 valid_dictionaries = double_array[1]
 
-                 #Get the stream URLS and append to an array
+                #Get the stream URLS and append to an array
                 array_urls_temp = []
                 for song_ID in valid_IDs_array:
                     stream_url = remote.get_stream_url(song_ID)
@@ -156,21 +156,7 @@ def Get_Soundcloud_lists(remote = None,soundcloud_data_obj = None):
             #Test Driver start
             #################################################################
             #print("The number of playlists in object is: ",soundcloud_data_obj.print_num_playlists())
-
-            soundcloud_data_obj.print_all_data()
-
-            #Try to get stream data for just one song. First get ID
-            example_song_ID = soundcloud_data_obj.playlists_array[0].Song_objects_array[0].ID
-            #print(example_song_ID)
-
-            stream_dict = remote.get_stream_url(example_song_ID)
-            print("type: ", type(stream_dict))
-            print("stream_dict: ", stream_dict)
-
-            #################################################################
-            #Test Driver End
-
-
+            return soundcloud_data_obj
 
         #If no USER_ID is returned exit program
         else:
