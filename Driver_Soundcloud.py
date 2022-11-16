@@ -24,7 +24,7 @@ def main():
          
         soundcloud_d = SoundCloud_Data()
                 
-        get_soundcloud_lists.Get_Soundcloud_lists(remote = soundcloud_account, soundcloud_data_obj = soundcloud_d)
+        get_soundcloud_lists.Get_Soundcloud_lists(account_obj = soundcloud_account)
 
 
 

@@ -1,6 +1,6 @@
 import logging
 import sys
-from soundcloud_lists import List, Song
+from soundcloud_lists import List, Song, SoundCloud_Data
 import Control_Playback_Soundcloud
 
 #Gets the Lists of valid songs from the users SOundcloud
@@ -77,27 +77,29 @@ def get_valid_songs(remote = None, ID_array = None, print_bool = False):
 
 #####################################################################################################################
 #####################################################################################################################
-def Get_Soundcloud_lists(remote = None,soundcloud_data_obj = None):
+def Get_Soundcloud_lists(account_obj = None):
 
     #If soundcloud remote object is valid
-    if(remote != None):
+    if(account_obj != None):
 
         #Get User ID
-        USER_ID = get_USER_ID(remote)
+        USER_ID = get_USER_ID(account_obj)
         
         #Get Lists of Song IDS
         if(USER_ID != None):
 
+            soundcloud_data_obj = SoundCloud_Data()
+
             #Get Valid Liked Songs list
             ##################################################################################
             #liked_songs = remote.get_tracks_liked(limit=100)
-            user_dictionary = remote.get_user_details(user_id = USER_ID)
+            user_dictionary = account_obj.get_user_details(user_id = USER_ID)
             num_liked_songs = user_dictionary['likes_count']
-            liked_songs = remote.get_tracks_liked(limit=20) #num_liked_songs)
+            liked_songs = account_obj.get_tracks_liked(limit=20) #num_liked_songs)
             
             #Extract the Song IDS as an array
             liked_song_IDS = liked_songs['collection']
-            double_array = get_valid_songs(remote = remote, ID_array = liked_song_IDS)
+            double_array = get_valid_songs(remote = account_obj, ID_array = liked_song_IDS)
 
             valid_IDs_array = double_array[0]
             valid_dictionaries = double_array[1]
@@ -105,7 +107,7 @@ def Get_Soundcloud_lists(remote = None,soundcloud_data_obj = None):
             #Get the stream URLS and append to an array
             array_urls = []
             for song_ID in valid_IDs_array:
-                stream_url = remote.get_stream_url(song_ID)
+                stream_url = account_obj.get_stream_url(song_ID)
                 array_urls.append(stream_url)
 
             #Create List object
@@ -115,14 +117,14 @@ def Get_Soundcloud_lists(remote = None,soundcloud_data_obj = None):
             #Get all user playlists
             ##################################################################################
             #playlist_array = remote.get_account_playlists()
-            user_playlists = (remote.get_playlists_from_user(user_id = USER_ID, limit = 15))['collection']
+            user_playlists = (account_obj.get_playlists_from_user(user_id = USER_ID, limit = 15))['collection']
             
             #Itterate through Users playlists
             counter = 0
             for i in user_playlists:
                 #counter += 1
                 
-                playlist_details = remote.get_playlist_details(i['id'])
+                playlist_details = account_obj.get_playlist_details(i['id'])
 
                 #Reset temp arrays
                 list_tracks = playlist_details['tracks']
@@ -135,14 +137,14 @@ def Get_Soundcloud_lists(remote = None,soundcloud_data_obj = None):
                     song_IDs.append(x['id']) #append song IDs to list
 
                 #Get valid IDS (only songs with metadata provided)                
-                double_array = get_valid_songs(remote = remote, ID_array = song_IDs)
+                double_array = get_valid_songs(remote = account_obj, ID_array = song_IDs)
                 valid_IDs_array = double_array[0]
                 valid_dictionaries = double_array[1]
 
                 #Get the stream URLS and append to an array
                 array_urls_temp = []
                 for song_ID in valid_IDs_array:
-                    stream_url = remote.get_stream_url(song_ID)
+                    stream_url = account_obj.get_stream_url(song_ID)
                     array_urls_temp.append(stream_url)
 
                 #Create a List object
@@ -160,6 +162,7 @@ def Get_Soundcloud_lists(remote = None,soundcloud_data_obj = None):
 
         #If no USER_ID is returned exit program
         else:
+            logging.error("No user ID returned in get_soundcloud_lists.py")
             sys.exit("Program exited. No valid USER_ID")
     
     #Non Valid Remote object

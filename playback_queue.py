@@ -78,7 +78,6 @@ class playback_queue:
     def bold_print_format(self):
 
         print ('\033[1m') #Bold FONT ON
-        print("\n")
         print('{:^60} {:^60}'.format("Song Queue", "Platform"))
         print ('\033[0m') #Bold FONT OFF
 

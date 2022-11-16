@@ -62,7 +62,7 @@ def main():
          
         soundcloud_d = SoundCloud_Data()
                 
-        soundcloud_data_object = get_soundcloud_lists.Get_Soundcloud_lists(remote = soundcloud_account_obj, soundcloud_data_obj = soundcloud_d)
+        soundcloud_data_object = get_soundcloud_lists.Get_Soundcloud_lists(account_obj = soundcloud_account_obj)
         soundcloud_data_object.print_all_data()
 
     else:
