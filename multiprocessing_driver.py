@@ -87,12 +87,11 @@ def get_spotify_data(connection, temp_obj = None):
 #Driver for the queue. Main Driver for both SOundcloud and Spotify API
 def main():
     if __name__ == '__main__':
-
          
         #Itialize objects with multithreading
         initialize_objects_array = initialize_objects_multithreaded()
     
-        spotify_object = initialize_objects_array[0]
+        spotify_remote = initialize_objects_array[0]
         spotify_object = initialize_objects_array[1]
         soundcloud_object = initialize_objects_array[2]
 
@@ -103,19 +102,19 @@ def main():
 
         #Setup Processes and targets
         p1 = Process(target = get_soundcloud_data, args=(conn2,soundcloud_object))
-        #p2 = Process(target = get_spotify_data, args=(conn4,spotify_object))
+        p2 = Process(target = get_spotify_data, args=(conn4,spotify_object))
 
         #Start processes
         p1.start()
-        #p2.start()
+        p2.start()
 
         #Pipe values
         soundcloud_data_object = conn1.recv()
-        #spotify_data_object = conn3.recv()
+        spotify_data_object = conn3.recv()
 
-        #test print
-        print(type(soundcloud_data_object))
-        #print(type(spotify_data_object))
+        #test print and Timing
+        spotify_data_object.print_all_data()
+        soundcloud_data_object.print_all_data()
        
         print("--- %s seconds ---" % (time.time() - start_time))
        

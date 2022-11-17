@@ -3,11 +3,22 @@ import sys
 from soundcloud_lists import List, Song, SoundCloud_Data
 import Control_Playback_Soundcloud
 
+
+#Multithreading libraires
+### Multithreaded Queue initializer   ####
+import multiprocessing
+from multiprocessing import Process, Queue, Value, Pipe
+from time import sleep
+
+#import threading libraries
+import concurrent.futures
+from concurrent.futures import ThreadPoolExecutor, wait
+
+
 #Gets the Lists of valid songs from the users SOundcloud
 #Current lists include:
 #1. Likes list
 #2. User Playlist(s)
-
 
 #Helper FUnction: Get Soundcloud USER ID
 def get_USER_ID(remote):
@@ -76,6 +87,39 @@ def get_valid_songs(remote = None, ID_array = None, print_bool = False):
         return None
 
 #####################################################################################################################
+#Helper Function For Multiprocessing
+def get_songs_from_playlist_helper(connection, counter, user_playlists, account_obj_temp):
+
+    i = user_playlists[counter]
+    playlist_details = account_obj_temp.get_playlist_details(i['id'])
+
+    #Reset temp arrays
+    list_tracks = playlist_details['tracks']
+    song_IDs = []
+    valid_IDs_array = []
+    valid_dictionaries = []
+
+    #Get all song IDS and respective dictionary
+    for x in list_tracks:
+        song_IDs.append(x['id']) #append song IDs to list
+
+    #Get valid IDS (only songs with metadata provided)                
+    double_array = get_valid_songs(remote = account_obj_temp, ID_array = song_IDs)
+    valid_IDs_array = double_array[0]
+    valid_dictionaries = double_array[1]
+
+    #Get the stream URLS and append to an array
+    array_urls_temp = []
+    for song_ID in valid_IDs_array:
+        stream_url = account_obj_temp.get_stream_url(song_ID)
+        array_urls_temp.append(stream_url)
+
+    
+    #Create a List object
+    playlist_object_temp = List(description = i['title'], name = i['title'], total_num_songs = len(list_tracks), total_num_populated_songs = len(valid_IDs_array), song_ids = valid_IDs_array, array_dictionaries = valid_dictionaries, array_stream_urls = array_urls_temp)
+    connection.send(playlist_object_temp)
+
+#####################################################################################################################
 #####################################################################################################################
 def Get_Soundcloud_lists(account_obj = None):
 
@@ -121,43 +165,40 @@ def Get_Soundcloud_lists(account_obj = None):
             
             #Itterate through Users playlists
             counter = 0
+
+            #Setup Process list
+            p_list = []
+            pipe_send_array = []
+            pipe_recieve_array = []
+
+            #Create array of pipes
             for i in user_playlists:
-                #counter += 1
+                conn1,conn2 = Pipe()
+                pipe_send_array.append(conn2)
+                pipe_recieve_array.append(conn1)
+
+            counter = 0
+            for i in user_playlists:
                 
-                playlist_details = account_obj.get_playlist_details(i['id'])
+                #Multiprocessing Setup
+                #start here with piping
+                #conn1,conn2 = Pipe()
+                temp_process = Process(target = get_songs_from_playlist_helper, args = (pipe_send_array[counter],counter, user_playlists,account_obj))
+                p_list.append(temp_process) #append process                
+                counter = counter + 1
 
-                #Reset temp arrays
-                list_tracks = playlist_details['tracks']
-                song_IDs = []
-                valid_IDs_array = []
-                valid_dictionaries = []
-
-                #Get all song IDS and respective dictionary
-                for x in list_tracks:
-                    song_IDs.append(x['id']) #append song IDs to list
-
-                #Get valid IDS (only songs with metadata provided)                
-                double_array = get_valid_songs(remote = account_obj, ID_array = song_IDs)
-                valid_IDs_array = double_array[0]
-                valid_dictionaries = double_array[1]
-
-                #Get the stream URLS and append to an array
-                array_urls_temp = []
-                for song_ID in valid_IDs_array:
-                    stream_url = account_obj.get_stream_url(song_ID)
-                    array_urls_temp.append(stream_url)
-
-                #Create a List object
-                playlist_object_temp = List(description = i['title'], name = i['title'], total_num_songs = len(list_tracks), total_num_populated_songs = len(valid_IDs_array), song_ids = valid_IDs_array, array_dictionaries = valid_dictionaries, array_stream_urls = array_urls_temp)
-                soundcloud_data_obj.add_playlist(temp_array = playlist_object_temp) #added
+            #start processes
+            for p in p_list:                
+                p.start()
+            
+            #Save results from each list
+            counter = 0
+            for p in p_list:
+                temp_list = (pipe_recieve_array[counter]).recv()
+                soundcloud_data_obj.add_playlist(temp_array = temp_list) #added
+                counter = counter + 1
 
             ##################################################################################
-
-
-
-            #Test Driver start
-            #################################################################
-            #print("The number of playlists in object is: ",soundcloud_data_obj.print_num_playlists())
             return soundcloud_data_obj
 
         #If no USER_ID is returned exit program
