@@ -7,6 +7,10 @@ from time import sleep
 import concurrent.futures
 from concurrent.futures import ThreadPoolExecutor, wait
 
+#additional libraries for authentication
+#import spotipy
+#from spotipy.oauth2 import SpotifyClientCredentials
+#import Spotify_Config
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -21,7 +25,7 @@ start_time = time.time()
 
 #Spotify Driver Imports
 ##############################################################################
-import Spotify_Authentication
+#import Spotify_Authentication
 import Control_Playback_Spotify
 import time #for testing and pausing
 import get_spotify_lists
@@ -85,44 +89,43 @@ def get_spotify_data(connection, temp_obj = None):
 
 ###############################################################################################################
 #Driver for the queue. Main Driver for both SOundcloud and Spotify API
-def main():
-    if __name__ == '__main__':
-         
-        #Itialize objects with multithreading
-        initialize_objects_array = initialize_objects_multithreaded()
+def driver():
+
+    #Itialize objects with multithreading
+    initialize_objects_array = initialize_objects_multithreaded()
+
+    spotify_remote = initialize_objects_array[0]
+    spotify_object = initialize_objects_array[1]
+    soundcloud_object = initialize_objects_array[2]
+
+    #Get Data Structures with Multiprocessing
+    #create Pipes to Pipe data structures back from Processes running in parallel
+    conn1, conn2 = Pipe()
+    conn3, conn4 = Pipe()
+
+    #Setup Processes and targets
+    p1 = Process(target = get_soundcloud_data, args=(conn2,soundcloud_object))
+    p2 = Process(target = get_spotify_data, args=(conn4,spotify_object))
+
+    #Start processes
+    p1.start()
+    p2.start()
+
+    #Pipe values
+    soundcloud_data_object = conn1.recv()
+    spotify_data_object = conn3.recv()
+
+    #test print and Timing
+    spotify_data_object.print_all_data()
+    soundcloud_data_object.print_all_data()
     
-        spotify_remote = initialize_objects_array[0]
-        spotify_object = initialize_objects_array[1]
-        soundcloud_object = initialize_objects_array[2]
-
-        #Get Data Structures with Multiprocessing
-        #create Pipes to Pipe data structures back from Processes running in parallel
-        conn1, conn2 = Pipe()
-        conn3, conn4 = Pipe()
-
-        #Setup Processes and targets
-        p1 = Process(target = get_soundcloud_data, args=(conn2,soundcloud_object))
-        p2 = Process(target = get_spotify_data, args=(conn4,spotify_object))
-
-        #Start processes
-        p1.start()
-        p2.start()
-
-        #Pipe values
-        soundcloud_data_object = conn1.recv()
-        spotify_data_object = conn3.recv()
-
-        #test print and Timing
-        spotify_data_object.print_all_data()
-        soundcloud_data_object.print_all_data()
+    print("--- %s seconds ---" % (time.time() - start_time))
        
-        print("--- %s seconds ---" % (time.time() - start_time))
-       
-
+    
 
 
 
 ####################################################################################################################################
 ####################################################################################################################################
 ###    END OF DRIVER    ###
-main()
+#main()
